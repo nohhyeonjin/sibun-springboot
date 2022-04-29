@@ -15,7 +15,7 @@ public class Store {
     private Long id;
 
     @OneToOne
-    private User owner;
+    private Member owner;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Category category;
@@ -31,7 +31,7 @@ public class Store {
     @OneToMany(mappedBy = "store")
     private List<RoomOrder> orderList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "menu")
+    @OneToMany(mappedBy = "store")
     private List<Menu> menuList = new ArrayList<>();
 
 }

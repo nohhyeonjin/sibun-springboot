@@ -7,7 +7,7 @@ import javax.persistence.*;
 
 @Entity
 @Getter @Setter
-public class User {
+public class Member {
 
     @Id @GeneratedValue
     private Long id;
@@ -17,5 +17,5 @@ public class User {
     private String pwd;
 
     @Enumerated(EnumType.STRING)
-    private UserType type;
+    private MemberType type;
 }

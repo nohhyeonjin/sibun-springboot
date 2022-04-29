@@ -16,7 +16,7 @@ public class IndividualOrder {
     private RoomOrder roomOrder;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
+    private Member member;
 
     @OneToOne(fetch = FetchType.LAZY)
     private Menu menu;

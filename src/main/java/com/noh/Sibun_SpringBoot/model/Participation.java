@@ -13,7 +13,7 @@ public class Participation {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
+    private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private ChatRoom chatRoom;

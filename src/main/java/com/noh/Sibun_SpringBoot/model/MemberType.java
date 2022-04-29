@@ -1,6 +1,6 @@
 package com.noh.Sibun_SpringBoot.model;
 
-public enum UserType {
+public enum MemberType {
     NORMAL,
     STORE
 }
