@@ -13,10 +13,9 @@ public class ChatRoom {
     @Id @GeneratedValue
     private Long id;
 
-    private String deliveryAddress;
+    @Embedded
+    private Address deliveryAddress;
 
     private LocalDateTime orderExpectedTime;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    private RoomOrder roomOrder;
 }

@@ -22,7 +22,8 @@ public class Store {
 
     private String name;
 
-    private String address;
+    @Embedded
+    private Address address;
 
     private int minimumPrice;
 
