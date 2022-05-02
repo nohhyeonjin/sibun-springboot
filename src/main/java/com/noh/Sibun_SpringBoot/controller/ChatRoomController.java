@@ -42,4 +42,9 @@ public class ChatRoomController {
 
         return chatRoom.getId();
     }
+
+    @PostMapping("/modifyChatRoom")
+    public Long modifyChatRoom(@RequestBody ChatRoom chatRoom) {
+        return chatRoomService.modifyChatRoom(chatRoom);
+    }
 }
