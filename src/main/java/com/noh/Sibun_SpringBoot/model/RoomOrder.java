@@ -14,6 +14,9 @@ public class RoomOrder {
     @Id @GeneratedValue
     private Long id;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    private ChatRoom chatRoom;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private Store store;
 
