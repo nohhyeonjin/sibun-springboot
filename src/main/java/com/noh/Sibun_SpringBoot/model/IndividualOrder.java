@@ -1,5 +1,6 @@
 package com.noh.Sibun_SpringBoot.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +14,7 @@ public class IndividualOrder {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     private RoomOrder roomOrder;
 
     @ManyToOne(fetch = FetchType.LAZY)

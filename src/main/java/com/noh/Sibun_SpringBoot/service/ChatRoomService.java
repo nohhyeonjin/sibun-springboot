@@ -1,13 +1,14 @@
 package com.noh.Sibun_SpringBoot.service;
 
-import com.noh.Sibun_SpringBoot.model.Address;
-import com.noh.Sibun_SpringBoot.model.ChatRoom;
+import com.noh.Sibun_SpringBoot.model.*;
 import com.noh.Sibun_SpringBoot.repository.ChatRoomRepository;
+import com.noh.Sibun_SpringBoot.repository.RoomOrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Service
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
+    private final RoomOrderRepository roomOrderRepository;
 
     @Transactional
     public Long createChatRoom(ChatRoom chatRoom) {
@@ -33,5 +35,11 @@ public class ChatRoomService {
 
     public ChatRoom findById(Long chatRoomId) {
         return chatRoomRepository.findById(chatRoomId);
+    }
+
+    public List<Menu> findChatRoomStoreMenus(ChatRoom chatRoom) {
+        RoomOrder roomOrder = roomOrderRepository.findOneByChatRoom(chatRoom);
+        Store store = roomOrder.getStore();
+        return store.getMenuList();
     }
 }

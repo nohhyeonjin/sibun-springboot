@@ -14,7 +14,7 @@ public class Store {
     @Id @GeneratedValue
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     private Member owner;
 
     @ManyToOne(fetch = FetchType.LAZY)

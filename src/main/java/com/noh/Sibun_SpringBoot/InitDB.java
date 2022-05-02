@@ -16,7 +16,9 @@ public class InitDB {
 
     @PostConstruct
     public void init() {
-        initService.dbInit1();
+        initService.initMember();
+        initService.initStore1();
+        initService.initStore2();
     }
 
     @Component
@@ -26,8 +28,12 @@ public class InitDB {
 
         private final EntityManager em;
 
-        public void dbInit1() {
-            System.out.println("Init1" + this.getClass());
+        public void initMember() {
+            Member member = createMember("testMember@naver.com", "testPwd", MemberType.NORMAL);
+            em.persist(member);
+        }
+
+        public void initStore1() {
             Member member = createMember("storeOwner@gmail.com", "storePwd", MemberType.STORE);
             em.persist(member);
 
@@ -36,6 +42,27 @@ public class InitDB {
 
             Store store = createStore("부산시", "명륜로", "12345", "던벼락막창", category, member);
             em.persist(store);
+
+            Menu menu1 = createMenu(store, "막창", 16900);
+            Menu menu2 = createMenu(store, "삼겹살", 8500);
+            em.persist(menu1);
+            em.persist(menu2);
+        }
+
+        public void initStore2() {
+            Member member = createMember("secondStore@daum.net", "storePwdd", MemberType.STORE);
+            em.persist(member);
+
+            Category category = createCategory("치킨");
+            em.persist(category);
+
+            Store store = createStore("부산시", "동래로", "98766", "처갓집치킨", category, member);
+            em.persist(store);
+
+            Menu menu1 = createMenu(store, "슈프림골드", 21000);
+            Menu menu2 = createMenu(store, "후라이드", 17000);
+            em.persist(menu1);
+            em.persist(menu2);
         }
 
         private Member createMember(String email, String pwd, MemberType type) {
@@ -59,6 +86,14 @@ public class InitDB {
             store.setCategory(category);
             store.setOwner(member);
             return store;
+        }
+
+        private Menu createMenu(Store store, String name, int price) {
+            Menu menu = new Menu();
+            menu.setStore(store);
+            menu.setName(name);
+            menu.setPrice(price);
+            return menu;
         }
     }
 }

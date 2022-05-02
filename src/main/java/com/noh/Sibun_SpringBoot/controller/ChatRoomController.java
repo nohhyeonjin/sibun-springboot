@@ -5,6 +5,8 @@ import com.noh.Sibun_SpringBoot.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class ChatRoomController {
@@ -57,5 +59,11 @@ public class ChatRoomController {
         participation.setRole(Role.NORMAL);
 
         return participationService.participate(participation);
+    }
+
+    @GetMapping("/chatRoomMenuList")
+    public List<Menu> getChatRoomMenuList(Long chatRoomId) {
+        ChatRoom chatRoom = chatRoomService.findById(chatRoomId);
+        return chatRoomService.findChatRoomStoreMenus(chatRoom);
     }
 }
