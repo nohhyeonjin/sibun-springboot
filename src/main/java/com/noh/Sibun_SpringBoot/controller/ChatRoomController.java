@@ -3,9 +3,7 @@ package com.noh.Sibun_SpringBoot.controller;
 import com.noh.Sibun_SpringBoot.model.*;
 import com.noh.Sibun_SpringBoot.service.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -46,5 +44,18 @@ public class ChatRoomController {
     @PostMapping("/modifyChatRoom")
     public Long modifyChatRoom(@RequestBody ChatRoom chatRoom) {
         return chatRoomService.modifyChatRoom(chatRoom);
+    }
+
+    @GetMapping("/participateChatRoom")
+    public Long participateChatRoom(@RequestParam Long memberId,
+                                    @RequestParam Long chatRoomId) {
+        Participation participation = new Participation();
+        ChatRoom chatRoom = chatRoomService.findById(chatRoomId);
+        participation.setChatRoom(chatRoom);
+        Member member = memberService.findById(memberId);
+        participation.setMember(member);
+        participation.setRole(Role.NORMAL);
+
+        return participationService.participate(participation);
     }
 }

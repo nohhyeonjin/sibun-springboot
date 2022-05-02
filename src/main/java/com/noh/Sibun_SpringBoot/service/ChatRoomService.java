@@ -30,4 +30,8 @@ public class ChatRoomService {
         findChatRoom.setOrderExpectedTime(chatRoom.getOrderExpectedTime());
         return findChatRoom.getId();
     }
+
+    public ChatRoom findById(Long chatRoomId) {
+        return chatRoomRepository.findById(chatRoomId);
+    }
 }
