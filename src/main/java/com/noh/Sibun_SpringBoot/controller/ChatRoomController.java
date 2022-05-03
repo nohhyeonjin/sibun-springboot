@@ -5,7 +5,6 @@ import com.noh.Sibun_SpringBoot.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,7 +15,6 @@ public class ChatRoomController {
     private final StoreService storeService;
     private final MemberService memberService;
     private final ParticipationService participationService;
-    private final MenuService menuService;
 
     @PostMapping("/createChatRoom")
     public Long createChatRoom(@RequestBody ChatRoomForm chatRoomForm) {
@@ -62,24 +60,4 @@ public class ChatRoomController {
         return participationService.participate(participation);
     }
 
-    @GetMapping("/chatRoomMenuList")
-    public List<Menu> getChatRoomMenuList(Long chatRoomId) {
-        ChatRoom chatRoom = chatRoomService.findById(chatRoomId);
-        return chatRoomService.findChatRoomStoreMenus(chatRoom);
-    }
-
-    @PostMapping("/chooseMenu")
-    public Long chooseMenu(@RequestBody ChooseMenuForm menuForm) {
-        Member member = memberService.findById(menuForm.getMemberId());
-        ChatRoom chatRoom = chatRoomService.findById(menuForm.getChatRoomId());
-        Menu menu = menuService.findById(menuForm.getMenuId());
-
-        IndividualOrder individualOrder = new IndividualOrder();
-        individualOrder.setMember(member);
-        individualOrder.setMenu(menu);
-        individualOrder.setAmount(menuForm.getAmount());
-
-        roomOrderService.addIndividualOrder(chatRoom, individualOrder);
-        return individualOrder.getId();
-    }
 }
