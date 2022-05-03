@@ -23,11 +23,26 @@ public class RoomOrder {
     @JsonIgnore
     private Store store;
 
-    @OneToMany(mappedBy = "roomOrder")
+    @OneToMany(mappedBy = "roomOrder", cascade = CascadeType.ALL)
     private List<IndividualOrder> individualOrderList = new ArrayList<>();
 
     private int totalPrice;
 
     @Enumerated(EnumType.STRING)
     private OrderState orderState;
+
+    //==비즈니스 로직==//
+    /**
+     * totalPrice 증가
+     */
+    public void addPrice(int price) {
+        this.totalPrice+=price;
+    }
+
+    //==연관관계 메서드==//
+    public void addIndividualOrder(IndividualOrder individualOrder) {
+        this.individualOrderList.add(individualOrder);
+        individualOrder.setRoomOrder(this);
+        addPrice(individualOrder.getPrice());
+    }
 }

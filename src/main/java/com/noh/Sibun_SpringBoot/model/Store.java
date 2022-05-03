@@ -35,4 +35,9 @@ public class Store {
     @OneToMany(mappedBy = "store")
     private List<Menu> menuList = new ArrayList<>();
 
+    //==연관관계 메서드==//
+    public void addMenu(Menu menu) {
+        this.menuList.add(menu);
+        menu.setStore(this);
+    }
 }
