@@ -2,8 +2,11 @@ package com.noh.Sibun_SpringBoot.controller;
 
 import com.noh.Sibun_SpringBoot.model.*;
 import com.noh.Sibun_SpringBoot.service.*;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 
 @RestController
@@ -60,4 +63,24 @@ public class ChatRoomController {
         return participationService.participate(participation);
     }
 
+    @GetMapping("/chatRoomDetail")
+    public ChatRoomDetailResponse chatRoomDetail(@RequestParam Long chatRoomId) {
+        ChatRoom chatRoom = chatRoomService.findById(chatRoomId);
+        Store store = storeService.findByChatRoom(chatRoom);
+        return new ChatRoomDetailResponse(chatRoom.getDeliveryAddress(), chatRoom.getOrderExpectedTime(), store.getName());
+    }
+
+    @Data
+    private class ChatRoomDetailResponse {
+
+        private Address deliveryAddress;
+        private LocalDateTime orderExpectedTime;
+        private String storeName;
+
+        public ChatRoomDetailResponse(Address deliveryAddress, LocalDateTime orderExpectedTime, String storeName) {
+            this.deliveryAddress = deliveryAddress;
+            this.orderExpectedTime = orderExpectedTime;
+            this.storeName = storeName;
+        }
+    }
 }
