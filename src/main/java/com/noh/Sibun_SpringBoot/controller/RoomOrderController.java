@@ -1,10 +1,7 @@
 package com.noh.Sibun_SpringBoot.controller;
 
 import com.noh.Sibun_SpringBoot.model.*;
-import com.noh.Sibun_SpringBoot.service.ChatRoomService;
-import com.noh.Sibun_SpringBoot.service.MemberService;
-import com.noh.Sibun_SpringBoot.service.MenuService;
-import com.noh.Sibun_SpringBoot.service.RoomOrderService;
+import com.noh.Sibun_SpringBoot.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +18,7 @@ public class RoomOrderController {
     private final MemberService memberService;
     private final MenuService menuService;
     private final RoomOrderService roomOrderService;
+    private final IndividualOrderService individualOrderService;
 
     @GetMapping("/chatRoomMenuList")
     public List<Menu> getChatRoomMenuList(Long chatRoomId) {
@@ -43,4 +41,12 @@ public class RoomOrderController {
         return individualOrder.getId();
     }
 
+    @PostMapping("/changeMenu")
+    public Long changeMenu(@RequestBody ChangeMenuForm menuForm) {
+        IndividualOrder individualOrder = individualOrderService.findById(menuForm.getIndividualOrderId());
+        Menu menu = menuService.findById(menuForm.getMenuId());
+
+        individualOrderService.changeMenu(individualOrder, menu, menuForm.getAmount());
+        return individualOrder.getId();
+    }
 }

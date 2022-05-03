@@ -39,6 +39,15 @@ public class RoomOrder {
         this.totalPrice+=price;
     }
 
+    public void minusPrice(int price) {
+        this.totalPrice-=price;
+    }
+
+    public void updateTotalPrice(int previousPrice, int changedPrice) {
+        minusPrice(previousPrice);
+        addPrice(changedPrice);
+    }
+
     //==연관관계 메서드==//
     public void addIndividualOrder(IndividualOrder individualOrder) {
         this.individualOrderList.add(individualOrder);
