@@ -1,9 +1,6 @@
 package com.noh.Sibun_SpringBoot.service;
 
-import com.noh.Sibun_SpringBoot.model.ChatRoom;
-import com.noh.Sibun_SpringBoot.model.IndividualOrder;
-import com.noh.Sibun_SpringBoot.model.OrderState;
-import com.noh.Sibun_SpringBoot.model.RoomOrder;
+import com.noh.Sibun_SpringBoot.model.*;
 import com.noh.Sibun_SpringBoot.repository.RoomOrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +15,7 @@ public class RoomOrderService {
 
     @Transactional
     public Long createRoomOrder(RoomOrder roomOrder) {
-        roomOrder.setOrderState(OrderState.BEFORE);
+        roomOrder.setOrderState(OrderState.READY);
         roomOrderRepository.save(roomOrder);
         return roomOrder.getId();
     }
@@ -27,5 +24,16 @@ public class RoomOrderService {
     public void addIndividualOrder(ChatRoom chatRoom, IndividualOrder individualOrder) {
         RoomOrder roomOrder = roomOrderRepository.findOneByChatRoom(chatRoom);
         roomOrder.addIndividualOrder(individualOrder);
+    }
+
+    @Transactional
+    public void order(RoomOrder roomOrder) {
+        roomOrder.setOrderState(OrderState.COMPLETE);
+        Store store = roomOrder.getStore();
+        store.addOrder(roomOrder);
+    }
+
+    public RoomOrder findById(Long id) {
+        return roomOrderRepository.findById(id);
     }
 }

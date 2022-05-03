@@ -3,10 +3,7 @@ package com.noh.Sibun_SpringBoot.controller;
 import com.noh.Sibun_SpringBoot.model.*;
 import com.noh.Sibun_SpringBoot.service.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -49,4 +46,13 @@ public class RoomOrderController {
         individualOrderService.changeMenu(individualOrder, menu, menuForm.getAmount());
         return individualOrder.getId();
     }
+
+    @PutMapping("/order/{id}")
+    public Long order(@PathVariable("id") Long id) {
+        RoomOrder roomOrder = roomOrderService.findById(id);
+        roomOrderService.order(roomOrder);
+        
+        return roomOrder.getId();
+    }
+
 }

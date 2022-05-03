@@ -23,4 +23,8 @@ public class RoomOrderRepository {
                 .setParameter("chatRoom", chatRoom)
                 .getSingleResult();
     }
+
+    public RoomOrder findById(Long id) {
+        return em.find(RoomOrder.class, id);
+    }
 }
