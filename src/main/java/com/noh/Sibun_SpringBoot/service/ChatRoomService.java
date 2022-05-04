@@ -42,4 +42,10 @@ public class ChatRoomService {
         Store store = roomOrder.getStore();
         return store.getMenuList();
     }
+
+    public List<IndividualOrder> chatRoomOrderList(Long chatRoomId) {
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId);
+        RoomOrder roomOrder = roomOrderRepository.findOneByChatRoom(chatRoom);
+        return roomOrder.getIndividualOrderList();
+    }
 }

@@ -2,11 +2,14 @@ package com.noh.Sibun_SpringBoot.controller;
 
 import com.noh.Sibun_SpringBoot.model.*;
 import com.noh.Sibun_SpringBoot.service.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -82,5 +85,37 @@ public class ChatRoomController {
             this.orderExpectedTime = orderExpectedTime;
             this.storeName = storeName;
         }
+    }
+
+    @GetMapping("/chatRoomOrderList")
+    public Result chatRoomOrderList(@RequestParam Long chatRoomId) {
+        List<IndividualOrder> individualOrderList = chatRoomService.chatRoomOrderList(chatRoomId);
+        List<ChatRoomOrderResponse> collect = individualOrderList.stream()
+                .map(m -> new ChatRoomOrderResponse(m.getMember().getId(), m.getMenu().getName(), m.getAmount(), m.getPrice()))
+                .collect(Collectors.toList());
+
+        int totalPrice = 0;
+        if (!individualOrderList.isEmpty()) {
+            totalPrice = individualOrderList.get(0).getRoomOrder().getTotalPrice();
+        }
+        return new Result(totalPrice, collect);
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class Result<T> {
+        private int totalPrice;
+        private T data;
+    }
+
+    @Data
+    @AllArgsConstructor
+    private class ChatRoomOrderResponse {
+
+        private Long userId;
+        private String menu;
+        private int amount;
+        private int price;
+
     }
 }
