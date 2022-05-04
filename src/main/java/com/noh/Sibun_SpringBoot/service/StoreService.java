@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -25,4 +27,10 @@ public class StoreService {
         RoomOrder roomOrder = roomOrderRepository.findOneByChatRoom(chatRoom);
         return roomOrder.getStore();
     }
+
+    public List<RoomOrder> getStoreRoomOrder(Long id) {
+        Store store = storeRepository.findById(id);
+        return store.getOrderList();
+    }
+
 }

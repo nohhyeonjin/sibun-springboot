@@ -1,10 +1,16 @@
 package com.noh.Sibun_SpringBoot.service;
 
+import com.noh.Sibun_SpringBoot.controller.CombinedIndividualMenuInfo;
+import com.noh.Sibun_SpringBoot.controller.RoomOrderDetail;
 import com.noh.Sibun_SpringBoot.model.*;
 import com.noh.Sibun_SpringBoot.repository.RoomOrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -12,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class RoomOrderService {
 
     private final RoomOrderRepository roomOrderRepository;
+    private final IndividualOrderService individualOrderService;
 
     @Transactional
     public Long createRoomOrder(RoomOrder roomOrder) {
@@ -36,4 +43,16 @@ public class RoomOrderService {
     public RoomOrder findById(Long id) {
         return roomOrderRepository.findById(id);
     }
+
+    public RoomOrderDetail getRoomOrderDetail(RoomOrder roomOrder) {
+        HashMap<String, Integer> combinedIndividualOrder = individualOrderService.combineIndividualOrder(roomOrder);
+        Long roomOrderId = roomOrder.getId();
+        OrderState state = roomOrder.getOrderState();
+        List<CombinedIndividualMenuInfo> menuInfoList = combinedIndividualOrder.entrySet().stream()
+                .map(m -> new CombinedIndividualMenuInfo(m.getKey(), m.getValue()))
+                .collect(Collectors.toList());
+        int totalPrice = roomOrder.getTotalPrice();
+        return new RoomOrderDetail(roomOrderId, state, menuInfoList, totalPrice);
+    }
+
 }
