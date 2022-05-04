@@ -118,4 +118,10 @@ public class ChatRoomController {
         private int price;
 
     }
+
+    @DeleteMapping("/removeChatRoom/{id}")
+    public void removeChatRoom(@PathVariable("id") Long id) {
+        participationService.removeParticipationInChatRoom(id);
+        chatRoomService.removeChatRoom(id);
+    }
 }

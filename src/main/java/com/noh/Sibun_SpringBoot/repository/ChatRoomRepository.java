@@ -19,4 +19,8 @@ public class ChatRoomRepository {
     public ChatRoom findById(Long id) {
         return em.find(ChatRoom.class, id);
     }
+
+    public void remove(ChatRoom chatRoom) {
+        em.remove(chatRoom);
+    }
 }

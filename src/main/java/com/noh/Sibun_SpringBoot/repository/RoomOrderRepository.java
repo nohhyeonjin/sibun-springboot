@@ -27,4 +27,8 @@ public class RoomOrderRepository {
     public RoomOrder findById(Long id) {
         return em.find(RoomOrder.class, id);
     }
+
+    public void remove(RoomOrder roomOrder) {
+        em.remove(roomOrder);
+    }
 }

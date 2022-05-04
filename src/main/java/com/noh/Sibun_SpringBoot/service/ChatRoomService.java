@@ -18,6 +18,7 @@ public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final RoomOrderRepository roomOrderRepository;
+    private final RoomOrderService roomOrderService;
 
     @Transactional
     public Long createChatRoom(ChatRoom chatRoom) {
@@ -47,5 +48,12 @@ public class ChatRoomService {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId);
         RoomOrder roomOrder = roomOrderRepository.findOneByChatRoom(chatRoom);
         return roomOrder.getIndividualOrderList();
+    }
+
+    @Transactional
+    public void removeChatRoom(Long chatRoomid) {
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomid);
+        roomOrderService.removeRelatedToChatRoom(chatRoom);
+        chatRoomRepository.remove(chatRoom);
     }
 }

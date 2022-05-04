@@ -55,4 +55,9 @@ public class RoomOrderService {
         return new RoomOrderDetail(roomOrderId, state, menuInfoList, totalPrice);
     }
 
+    @Transactional
+    public void removeRelatedToChatRoom(ChatRoom chatRoom) {
+        RoomOrder roomOrder = roomOrderRepository.findOneByChatRoom(chatRoom);
+        roomOrderRepository.remove(roomOrder);
+    }
 }
