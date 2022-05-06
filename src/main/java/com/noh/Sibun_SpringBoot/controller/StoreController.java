@@ -1,5 +1,6 @@
 package com.noh.Sibun_SpringBoot.controller;
 
+import com.noh.Sibun_SpringBoot.controller.dto.RoomOrderDetail;
 import com.noh.Sibun_SpringBoot.model.RoomOrder;
 import com.noh.Sibun_SpringBoot.service.RoomOrderService;
 import com.noh.Sibun_SpringBoot.service.StoreService;

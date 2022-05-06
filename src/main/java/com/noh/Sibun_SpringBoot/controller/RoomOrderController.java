@@ -1,50 +1,45 @@
 package com.noh.Sibun_SpringBoot.controller;
 
+import com.noh.Sibun_SpringBoot.controller.dto.ChangeMenuRequest;
+import com.noh.Sibun_SpringBoot.controller.dto.ChooseMenuRequest;
+import com.noh.Sibun_SpringBoot.controller.dto.MenuResponse;
 import com.noh.Sibun_SpringBoot.model.*;
 import com.noh.Sibun_SpringBoot.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
 public class RoomOrderController {
 
     private final ChatRoomService chatRoomService;
-    private final MemberService memberService;
-    private final MenuService menuService;
     private final RoomOrderService roomOrderService;
     private final IndividualOrderService individualOrderService;
 
-    @GetMapping("/chatRoomMenuList")
-    public List<Menu> getChatRoomMenuList(Long chatRoomId) {
-        ChatRoom chatRoom = chatRoomService.findById(chatRoomId);
-        return chatRoomService.findChatRoomStoreMenus(chatRoom);
+    @GetMapping("/order/chatRoomMenuList")
+    public List<MenuResponse> getChatRoomMenuList(Long chatRoomId) {
+        List<Menu> menuList = chatRoomService.findChatRoomStoreMenus(chatRoomId);
+        List<MenuResponse> result = menuList.stream()
+                .map(menu -> new MenuResponse(menu.getName(), menu.getPrice()))
+                .collect(Collectors.toList());
+
+        return result;
     }
 
-    @PostMapping("/chooseMenu")
-    public Long chooseMenu(@RequestBody ChooseMenuForm menuForm) {
-        Member member = memberService.findById(menuForm.getMemberId());
-        ChatRoom chatRoom = chatRoomService.findById(menuForm.getChatRoomId());
-        Menu menu = menuService.findById(menuForm.getMenuId());
-
-        IndividualOrder individualOrder = new IndividualOrder();
-        individualOrder.setMember(member);
-        individualOrder.setMenu(menu);
-        individualOrder.setAmount(menuForm.getAmount());
-
-        roomOrderService.addIndividualOrder(chatRoom, individualOrder);
+    @PostMapping("/order/chooseMenu")
+    public Long chooseMenu(@RequestBody ChooseMenuRequest request) {
+        IndividualOrder individualOrder = individualOrderService.createIndividualOrder(request.getMemberId(), request.getMenuId(), request.getAmount());
+        roomOrderService.addIndividualOrder(request.getChatRoomId(), individualOrder);
         return individualOrder.getId();
     }
 
-    @PostMapping("/changeMenu")
-    public Long changeMenu(@RequestBody ChangeMenuForm menuForm) {
-        IndividualOrder individualOrder = individualOrderService.findById(menuForm.getIndividualOrderId());
-        Menu menu = menuService.findById(menuForm.getMenuId());
-
-        individualOrderService.changeMenu(individualOrder, menu, menuForm.getAmount());
-        return individualOrder.getId();
+    @PostMapping("/order/changeMenu")
+    public Long changeMenu(@RequestBody ChangeMenuRequest request) {
+        Long id = individualOrderService.changeMenu(request.getIndividualOrderId(), request.getMenuId(), request.getAmount());
+        return id;
     }
 
     @PutMapping("/order/{id}")

@@ -1,10 +1,10 @@
-package com.noh.Sibun_SpringBoot.controller;
+package com.noh.Sibun_SpringBoot.controller.dto;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class ChangeMenuForm {
+public class ChangeMenuRequest {
 
     private Long individualOrderId;
     private Long menuId;

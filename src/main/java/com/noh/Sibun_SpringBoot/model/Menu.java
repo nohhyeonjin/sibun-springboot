@@ -14,7 +14,6 @@ public class Menu {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
     private Store store;
 
     private String name;

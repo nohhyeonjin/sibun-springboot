@@ -1,13 +1,14 @@
 package com.noh.Sibun_SpringBoot.controller;
 
+import com.noh.Sibun_SpringBoot.controller.dto.ChatRoomDetailResponse;
+import com.noh.Sibun_SpringBoot.controller.dto.ChatRoomOrderResponse;
+import com.noh.Sibun_SpringBoot.controller.dto.CreateChatRoomRequest;
+import com.noh.Sibun_SpringBoot.controller.dto.IndividualOrderInfo;
 import com.noh.Sibun_SpringBoot.model.*;
 import com.noh.Sibun_SpringBoot.service.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,107 +20,57 @@ public class ChatRoomController {
     private final ChatRoomService chatRoomService;
     private final RoomOrderService roomOrderService;
     private final StoreService storeService;
-    private final MemberService memberService;
     private final ParticipationService participationService;
 
-    @PostMapping("/createChatRoom")
-    public Long createChatRoom(@RequestBody ChatRoomForm chatRoomForm) {
+    @PostMapping("/chatRoom/create")
+    public Long createChatRoom(@RequestBody CreateChatRoomRequest request) {
         // 채팅방 생성
-        ChatRoom chatRoom = new ChatRoom();
-        chatRoom.setDeliveryAddress(chatRoomForm.getDeliveryAddress());
-        chatRoom.setOrderExpectedTime(chatRoomForm.getOrderExpectedTime());
-        chatRoomService.createChatRoom(chatRoom);
+        ChatRoom chatRoom = chatRoomService.createChatRoom(request.getDeliveryAddress(), request.getOrderExpectedTime());
 
         // 채팅방 주문 생성
-        RoomOrder roomOrder = new RoomOrder();
-        roomOrder.setChatRoom(chatRoom);
-        Store store = storeService.findById(chatRoomForm.getStoreId());
-        roomOrder.setStore(store);
-        roomOrderService.createRoomOrder(roomOrder);
+        RoomOrder roomOrder = roomOrderService.createRoomOrder(chatRoom, request.getStoreId());
 
         // 채팅방 참여
-        Participation participation = new Participation();
-        participation.setChatRoom(chatRoom);
-        Member member = memberService.findById(chatRoomForm.getMemberId());
-        participation.setMember(member);
-        participation.setRole(Role.MASTER);
-        participationService.participate(participation);
+        participationService.participate(chatRoom.getId(), request.getMemberId(), Role.MASTER);
 
         return chatRoom.getId();
     }
 
-    @PostMapping("/modifyChatRoom")
+    @PostMapping("/chatRoom/modify")
     public Long modifyChatRoom(@RequestBody ChatRoom chatRoom) {
         return chatRoomService.modifyChatRoom(chatRoom);
     }
 
-    @GetMapping("/participateChatRoom")
+    @GetMapping("/chatRoom/participate")
     public Long participateChatRoom(@RequestParam Long memberId,
                                     @RequestParam Long chatRoomId) {
-        Participation participation = new Participation();
-        ChatRoom chatRoom = chatRoomService.findById(chatRoomId);
-        participation.setChatRoom(chatRoom);
-        Member member = memberService.findById(memberId);
-        participation.setMember(member);
-        participation.setRole(Role.NORMAL);
+        Participation participation = participationService.participate(chatRoomId, memberId, Role.NORMAL);
 
-        return participationService.participate(participation);
+        return participation.getId();
     }
 
-    @GetMapping("/chatRoomDetail")
+    @GetMapping("/chatRoom/detail")
     public ChatRoomDetailResponse chatRoomDetail(@RequestParam Long chatRoomId) {
         ChatRoom chatRoom = chatRoomService.findById(chatRoomId);
         Store store = storeService.findByChatRoom(chatRoom);
         return new ChatRoomDetailResponse(chatRoom.getDeliveryAddress(), chatRoom.getOrderExpectedTime(), store.getName());
     }
 
-    @Data
-    private class ChatRoomDetailResponse {
-
-        private Address deliveryAddress;
-        private LocalDateTime orderExpectedTime;
-        private String storeName;
-
-        public ChatRoomDetailResponse(Address deliveryAddress, LocalDateTime orderExpectedTime, String storeName) {
-            this.deliveryAddress = deliveryAddress;
-            this.orderExpectedTime = orderExpectedTime;
-            this.storeName = storeName;
-        }
-    }
-
-    @GetMapping("/chatRoomOrderList")
-    public Result chatRoomOrderList(@RequestParam Long chatRoomId) {
+    @GetMapping("/chatRoom/orderList")
+    public ChatRoomOrderResponse chatRoomOrderList(@RequestParam Long chatRoomId) {
         List<IndividualOrder> individualOrderList = chatRoomService.chatRoomOrderList(chatRoomId);
-        List<ChatRoomOrderResponse> collect = individualOrderList.stream()
-                .map(m -> new ChatRoomOrderResponse(m.getMember().getId(), m.getMenu().getName(), m.getAmount(), m.getPrice()))
+        List<IndividualOrderInfo> collect = individualOrderList.stream()
+                .map(m -> new IndividualOrderInfo(m.getMember().getId(), m.getMenu().getName(), m.getAmount(), m.getPrice()))
                 .collect(Collectors.toList());
 
         int totalPrice = 0;
         if (!individualOrderList.isEmpty()) {
             totalPrice = individualOrderList.get(0).getRoomOrder().getTotalPrice();
         }
-        return new Result(totalPrice, collect);
+        return new ChatRoomOrderResponse(totalPrice, collect);
     }
 
-    @Data
-    @AllArgsConstructor
-    static class Result<T> {
-        private int totalPrice;
-        private T data;
-    }
-
-    @Data
-    @AllArgsConstructor
-    private class ChatRoomOrderResponse {
-
-        private Long userId;
-        private String menu;
-        private int amount;
-        private int price;
-
-    }
-
-    @DeleteMapping("/removeChatRoom/{id}")
+    @DeleteMapping("/chatRoom/remove/{id}")
     public void removeChatRoom(@PathVariable("id") Long id) {
         participationService.removeParticipationInChatRoom(id);
         chatRoomService.removeChatRoom(id);

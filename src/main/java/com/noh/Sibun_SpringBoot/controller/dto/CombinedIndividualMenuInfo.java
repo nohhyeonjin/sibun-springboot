@@ -1,4 +1,4 @@
-package com.noh.Sibun_SpringBoot.controller;
+package com.noh.Sibun_SpringBoot.controller.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

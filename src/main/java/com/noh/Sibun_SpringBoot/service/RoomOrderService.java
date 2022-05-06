@@ -1,9 +1,11 @@
 package com.noh.Sibun_SpringBoot.service;
 
-import com.noh.Sibun_SpringBoot.controller.CombinedIndividualMenuInfo;
-import com.noh.Sibun_SpringBoot.controller.RoomOrderDetail;
+import com.noh.Sibun_SpringBoot.controller.dto.CombinedIndividualMenuInfo;
+import com.noh.Sibun_SpringBoot.controller.dto.RoomOrderDetail;
 import com.noh.Sibun_SpringBoot.model.*;
+import com.noh.Sibun_SpringBoot.repository.ChatRoomRepository;
 import com.noh.Sibun_SpringBoot.repository.RoomOrderRepository;
+import com.noh.Sibun_SpringBoot.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,17 +20,25 @@ import java.util.stream.Collectors;
 public class RoomOrderService {
 
     private final RoomOrderRepository roomOrderRepository;
+    private final ChatRoomRepository chatRoomRepository;
+    private final StoreRepository storeRepository;
     private final IndividualOrderService individualOrderService;
 
     @Transactional
-    public Long createRoomOrder(RoomOrder roomOrder) {
+    public RoomOrder createRoomOrder(ChatRoom chatRoom, Long storeId) {
+        Store store = storeRepository.findById(storeId);
+        RoomOrder roomOrder = new RoomOrder();
+        roomOrder.setChatRoom(chatRoom);
+        roomOrder.setStore(store);
         roomOrder.setOrderState(OrderState.READY);
         roomOrderRepository.save(roomOrder);
-        return roomOrder.getId();
+
+        return roomOrder;
     }
 
     @Transactional
-    public void addIndividualOrder(ChatRoom chatRoom, IndividualOrder individualOrder) {
+    public void addIndividualOrder(Long chatRoomId, IndividualOrder individualOrder) {
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId);
         RoomOrder roomOrder = roomOrderRepository.findOneByChatRoom(chatRoom);
         roomOrder.addIndividualOrder(individualOrder);
     }

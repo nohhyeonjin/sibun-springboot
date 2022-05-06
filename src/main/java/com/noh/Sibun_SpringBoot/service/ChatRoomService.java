@@ -21,9 +21,13 @@ public class ChatRoomService {
     private final RoomOrderService roomOrderService;
 
     @Transactional
-    public Long createChatRoom(ChatRoom chatRoom) {
+    public ChatRoom createChatRoom(Address deliveryAddress, LocalDateTime orderExpectedTime) {
+        ChatRoom chatRoom = new ChatRoom();
+        chatRoom.setDeliveryAddress(deliveryAddress);
+        chatRoom.setOrderExpectedTime(orderExpectedTime);
+
         chatRoomRepository.save(chatRoom);
-        return chatRoom.getId();
+        return chatRoom;
     }
 
     @Transactional
@@ -38,10 +42,10 @@ public class ChatRoomService {
         return chatRoomRepository.findById(chatRoomId);
     }
 
-    public List<Menu> findChatRoomStoreMenus(ChatRoom chatRoom) {
+    public List<Menu> findChatRoomStoreMenus(Long chatRoomId) {
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId);
         RoomOrder roomOrder = roomOrderRepository.findOneByChatRoom(chatRoom);
-        Store store = roomOrder.getStore();
-        return store.getMenuList();
+        return roomOrder.getStore().getMenuList();
     }
 
     public List<IndividualOrder> chatRoomOrderList(Long chatRoomId) {
