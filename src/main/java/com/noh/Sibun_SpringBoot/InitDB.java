@@ -40,7 +40,7 @@ public class InitDB {
             Category category = createCategory("야식");
             em.persist(category);
 
-            Store store = createStore("부산시", "명륜로", "12345", "던벼락막창", category, member);
+            Store store = createStore("부산시", "명륜로", "12345", "던벼락막창", category, member, 15000, 2500);
             em.persist(store);
 
             Menu menu1 = createMenu(store, "막창", 16900);
@@ -56,7 +56,7 @@ public class InitDB {
             Category category = createCategory("치킨");
             em.persist(category);
 
-            Store store = createStore("부산시", "동래로", "98766", "처갓집치킨", category, member);
+            Store store = createStore("부산시", "동래로", "98766", "처갓집치킨", category, member, 12000, 3000);
             em.persist(store);
 
             Menu menu1 = createMenu(store, "슈프림골드", 21000);
@@ -79,12 +79,14 @@ public class InitDB {
             return category;
         }
 
-        private Store createStore(String city, String street, String zipcode, String name, Category category, Member member) {
+        private Store createStore(String city, String street, String zipcode, String name, Category category, Member member, int minimumPrice, int deliveryFee) {
             Store store = new Store();
             store.setAddress(new Address(city, street, zipcode));
             store.setName(name);
             store.setCategory(category);
             store.setOwner(member);
+            store.setMinimumPrice(minimumPrice);
+            store.setDeliveryFee(deliveryFee);
             return store;
         }
 

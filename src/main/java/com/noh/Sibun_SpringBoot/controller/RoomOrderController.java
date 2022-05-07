@@ -43,11 +43,9 @@ public class RoomOrderController {
     }
 
     @PutMapping("/order/{id}")
-    public Long order(@PathVariable("id") Long id) {
-        RoomOrder roomOrder = roomOrderService.findById(id);
-        roomOrderService.order(roomOrder);
-        
-        return roomOrder.getId();
+    public Long order(@PathVariable("id") Long orderId) {
+        Long id = roomOrderService.order(orderId);
+        return id;
     }
 
 }

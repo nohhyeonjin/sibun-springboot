@@ -44,10 +44,20 @@ public class RoomOrderService {
     }
 
     @Transactional
-    public void order(RoomOrder roomOrder) {
-        roomOrder.setOrderState(OrderState.COMPLETE);
+    public Long order(Long id) {
+        RoomOrder roomOrder = roomOrderRepository.findById(id);
         Store store = roomOrder.getStore();
+        int minimumPrice = store.getMinimumPrice();
+        int roomOrderPrice = roomOrder.getTotalPrice();
+
+        if (roomOrderPrice < minimumPrice) {
+            throw new IllegalStateException("최소주문금액을 만족하지 않습니다.");
+        }
+
+        roomOrder.setOrderState(OrderState.COMPLETE);
         store.addOrder(roomOrder);
+
+        return roomOrder.getId();
     }
 
     public RoomOrder findById(Long id) {
